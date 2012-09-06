@@ -11,7 +11,8 @@ void output_plain_content(FILE *output, char *content, int shortenp) {
 
   if (! shortenp)
     length = strlen(content);
-  
+
+  // Quote HTML special characters.
   while ((c = *content) && length-- > 0) {
     if (c == '<')
       fprintf(output, "&lt;");
@@ -31,6 +32,7 @@ void output_html_content(FILE *output, char *content, int shortenp) {
   if (! shortenp)
     length = strlen(content);
 
+  // Strip all HTML tags.
   while (length > 0 &&
 	 *end) {
     while (*end && *end != '<')
@@ -51,12 +53,9 @@ char *convert_to_utf8(const char *string, const char *charset) {
   iconv_t local_to_utf8;
   char *result;
 
-  //g_mime_charset_init();
-	
   utf8 = g_mime_charset_name("utf-8");
   local = g_mime_charset_name(charset);
   local_to_utf8 = iconv_open(utf8, local);
-
   result = g_mime_iconv_strdup(local_to_utf8, string);
 
   return result;
@@ -285,5 +284,5 @@ int main(int argc, char **argv) {
   fclose(output);
   rename(tmp_name, output_name);
   
-  return 0;
+  exit(0);
 }
