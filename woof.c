@@ -193,14 +193,8 @@ char *clean_from(char *from) {
 
   if ((iaddr_list = internet_address_list_parse_string(from)) != NULL) {
     iaddr = internet_address_list_get_address(iaddr_list, 0);
-    if (iaddr->name != NULL) {
+    if (iaddr->name != NULL)
       strcpy(from, iaddr->name);
-      
-      /* There's a bug in gmimelib that may leave a closing paren in
-	 the name field. */
-      if (strrchr(from, ')') == from + strlen(from) - 1) 
-	*strrchr(from, ')') = 0;
-    }
     g_object_unref(iaddr_list);
   }
   return from;
