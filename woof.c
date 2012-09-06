@@ -227,8 +227,9 @@ void read_file(FILE *output, int input) {
   msg = g_mime_parser_construct_message(g_mime_parser_new_with_stream(stream));
 
   g_mime_message_get_date(msg, &time, &tz);
-  from = clean_from((char*)g_mime_object_get_header((GMimeObject*)msg, "From"));
-  archive = (char*)g_mime_object_get_header((GMimeObject*)msg, "Archived-at");
+  from = clean_from(strdup(g_mime_object_get_header((GMimeObject*)msg,
+						    "From")));
+  archive = strdup(g_mime_object_get_header((GMimeObject*)msg, "Archived-at"));
 
   fprintf(output, "<span class=from>%s</span>\n", from);
   
