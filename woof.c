@@ -267,6 +267,8 @@ int main(int argc, char **argv) {
     exit(-1);
   }
 
+  // Write to a temporary file to avoid having clients see
+  // a half-written file.
   output_name = argv[1];
   tmp_name = malloc(strlen(output_name) + 4);
   strcpy(tmp_name, output_name);
