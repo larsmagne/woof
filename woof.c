@@ -221,7 +221,8 @@ void read_file(FILE *output, int input) {
   GMimeMessage *msg;
   time_t time;
   int tz;
-  char *from, *archive;
+  char *from;
+  const char *archive;
   
   stream = g_mime_stream_fs_new(input);
   msg = g_mime_parser_construct_message(g_mime_parser_new_with_stream(stream));
@@ -229,14 +230,15 @@ void read_file(FILE *output, int input) {
   g_mime_message_get_date(msg, &time, &tz);
   from = clean_from(strdup(g_mime_object_get_header((GMimeObject*)msg,
 						    "From")));
-  archive = strdup(g_mime_object_get_header((GMimeObject*)msg, "Archived-at"));
+  archive = g_mime_object_get_header((GMimeObject*)msg, "Archived-at");
 
   fprintf(output, "<span class=from>%s</span>\n", from);
+  free(from);
   
   transform_part(output, msg->mime_part, archive? 1: 0); 
 
   if (archive) {
-    char *final;
+    char *final, *garchive = strdup(archive);
     while (*archive &&
 	   (*archive == '<' ||
 	    *archive == ' '))
@@ -245,6 +247,7 @@ void read_file(FILE *output, int input) {
     if (final)
       *final = 0;
     fprintf(output, "<a href=\"%s\">Read more</a>\n", archive);
+    free(garchive);
   }
   
   g_object_unref(stream);
