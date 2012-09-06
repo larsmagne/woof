@@ -89,13 +89,15 @@ void transform_simple_part(FILE *output, GMimePart* part, int shortenp) {
   for (p = content_type; *p; p++) 
     *p = tolower(*p);
 
-  /* We copy over the content and zero-terminate it. */
+  /* Get the content of the part. */
   wrapper = g_mime_part_get_content_object(part);
   stream = g_mime_data_wrapper_get_stream(wrapper);
   contentLen = g_mime_stream_length(stream);
-  mcontent = malloc(contentLen + 1);
+  mcontent = calloc(contentLen + 1, 1);
   g_mime_stream_read(stream, mcontent, contentLen);
   use_content = mcontent;
+  g_object_unref(stream);
+  g_object_unref(wrapper);
 
   /* Convert contents to utf-8.  If the conversion wasn't successful,
      we use the original contents. */
@@ -106,11 +108,14 @@ void transform_simple_part(FILE *output, GMimePart* part, int shortenp) {
   }
 
   fprintf(output, "<div class=body>");
+
   if (! strcmp(content_type, "text/html"))
     output_html_content(output, use_content, shortenp);
   else
     output_plain_content(output, use_content, shortenp);
-  fprintf(output, "...\n");
+
+  if (shortenp)
+    fprintf(output, "...\n");
   fprintf(output, "</div>\n");
 
   free(mcontent);
