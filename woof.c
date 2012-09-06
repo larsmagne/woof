@@ -40,7 +40,7 @@ void output_html_content(FILE *output, char *content, int shortenp) {
     *end++ = 0;
     if (end - content > length)
       *(content + length) = 0;
-    fprintf(output, "%s", content);
+    fputs(content, output);
     length -= end - content;
     while (*end && *end != '>')
       end++;
