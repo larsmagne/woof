@@ -251,6 +251,8 @@ void read_file(FILE *output, int input) {
   int tz;
   char *from;
   const char *archive;
+  struct tm *tmm;
+  char date[256];
   
   stream = g_mime_stream_fs_new(input);
   msg = g_mime_parser_construct_message(g_mime_parser_new_with_stream(stream));
@@ -262,6 +264,10 @@ void read_file(FILE *output, int input) {
 
   fprintf(output, "<span class=from>%s</span>\n", from);
   free(from);
+
+  tmm = gmtime(&time);
+  strftime(date, 255, "%Y-%m-%d %H:%M:%S GMT", tmm);
+  fprintf(output, "<span class=date>%s</span>\n", date);
   
   transform_part(output, msg->mime_part, archive? 1: 0); 
 
