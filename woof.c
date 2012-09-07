@@ -3,7 +3,46 @@
 #include <string.h>
 #include <fcntl.h>
 #include <gmime/gmime.h>
+#include <sys/stat.h>
 #include <ctype.h>
+
+int make_directory (const char *dir) {
+  struct stat stat_buf;
+
+  if (stat(dir, &stat_buf) == -1) {
+    if (mkdir(dir, 0777) == -1) {
+      fprintf(stderr, "Can't create directory %s\n", dir);
+      perror("weft");
+      return 0;
+    } 
+    return 1;
+  } else if (S_ISDIR(stat_buf.st_mode)) {
+    return 1;
+  }
+  return 0;
+}
+
+void ensure_directory(const char *file_name) {
+  char *dir = malloc(strlen(file_name) + 1);
+  char *s = dir + 1;
+  
+  strcpy(dir, file_name);
+  
+  while (*s != 0) {
+    while (*s != 0 && *s != '/')
+      s++;
+    if (*s == 0)
+      break;
+    if (*s == '/') {
+      *s = 0;
+      make_directory(dir);
+      *s = '/';
+    }
+    s++;
+  }
+
+  free(dir);
+}
 
 void output_plain_content(FILE *output, char *content, int shortenp) {
   int length = 100;
@@ -269,6 +308,7 @@ int main(int argc, char **argv) {
   // Write to a temporary file to avoid having clients see
   // a half-written file.
   output_name = argv[1];
+  ensure_directory(output_name);
   tmp_name = malloc(strlen(output_name) + 4);
   strcpy(tmp_name, output_name);
   strcat(tmp_name, ".tmp");
