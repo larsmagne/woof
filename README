@@ -1,0 +1,11 @@
+This small program is designed to generate HTML to be displayed when
+viewing Gwene threads.
+
+The interface is pretty simple -- you specify the output file, and all
+the news spool files you wish to display, and woof will then generate
+one HTML file, where drastically shortened versions of each Gwene
+article are displayed.  Only the first 100 characters in each message
+are included.
+
+The exception to this is for comments posted on Gwene, where the
+complete message is output.
