@@ -135,7 +135,6 @@ void transform_simple_part(FILE *output, GMimePart* part, int shortenp) {
   mcontent = calloc(contentLen + 1, 1);
   g_mime_stream_read(stream, mcontent, contentLen);
   use_content = mcontent;
-  g_object_unref(stream);
   g_object_unref(wrapper);
 
   /* Convert contents to utf-8.  If the conversion wasn't successful,
@@ -315,7 +314,7 @@ int main(int argc, char **argv) {
   // a half-written file.
   output_name = argv[1];
   ensure_directory(output_name);
-  tmp_name = malloc(strlen(output_name) + 4);
+  tmp_name = malloc(strlen(output_name) + 5);
   strcpy(tmp_name, output_name);
   strcat(tmp_name, ".tmp");
 
