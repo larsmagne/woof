@@ -261,6 +261,7 @@ void read_file(FILE *output, int input) {
 						    "From")));
   archive = g_mime_object_get_header((GMimeObject*)msg, "Archived-at");
 
+  fprintf(output, "<div class=article>\n");
   fprintf(output, "<span class=from>%s</span>\n", from);
   free(from);
 
@@ -282,6 +283,7 @@ void read_file(FILE *output, int input) {
     fprintf(output, "<a href=\"%s\">Read more</a>\n", archive);
     free(garchive);
   }
+  fprintf(output, "</div>\n");
   
   g_object_unref(stream);
 }
