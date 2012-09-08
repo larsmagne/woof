@@ -266,7 +266,7 @@ void read_file(FILE *output, int input) {
   free(from);
 
   tmm = gmtime(&time);
-  strftime(date, 255, "%Y-%m-%d %H:%M:%S GMT", tmm);
+  strftime(date, 255, "%Y-%m-%d %H:%M:%S", tmm);
   fprintf(output, "<span class=date>%s</span>\n", date);
   
   transform_part(output, msg->mime_part, archive? 1: 0); 
