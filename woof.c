@@ -51,8 +51,11 @@ void output_plain_content(FILE *output, char *content, int shortenp) {
   if (! shortenp)
     length = strlen(content);
 
-  // Quote HTML special characters.
-  while ((c = *content) && length-- > 0) {
+  // Output only the first 100 characters, but don't stop outputting
+  // until we're at the end of word.
+  while ((c = *content) &&
+	 (length-- > 0 || c != ' ')) {
+    // Quote HTML special characters.
     if (c == '<')
       fprintf(output, "&lt;");
     else if (c == '>')
@@ -71,14 +74,19 @@ void output_html_content(FILE *output, char *content, int shortenp) {
   if (! shortenp)
     length = strlen(content);
 
-  // Strip all HTML tags.
-  while (length > 0 &&
-	 *end) {
+  // Output only the first 100 characters, but don't stop outputting
+  // until we're at the end of word.
+  while (*end && length > 0) {
+    // Strip all HTML tags.
     while (*end && *end != '<')
       end++;
     *end++ = 0;
-    if (end - content > length)
+    if (end - content > length) {
+      // Find the end of the current word.
+      while (*(content + length) && *(content + length) != ' ')
+	length++;
       *(content + length) = 0;
+    }
     fputs(content, output);
     length -= end - content;
     while (*end && *end != '>')
