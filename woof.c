@@ -53,7 +53,7 @@ void output_plain_content(FILE *output, char *content, int shortenp) {
 
   // Output only the first 100 characters, but don't stop outputting
   // until we're at the end of word.
-  while ((c = *content) &&
+  while ((c = *content++) &&
 	 (length-- > 0 || c != ' ')) {
     // Quote HTML special characters.
     if (c == '<')
@@ -245,7 +245,7 @@ char *clean_from(char *from) {
   if ((iaddr_list = internet_address_list_parse_string(from)) != NULL) {
     iaddr = internet_address_list_get_address(iaddr_list, 0);
     if (iaddr->name != NULL)
-      strcpy(from, iaddr->name);
+      strcpy(from, g_mime_utils_header_decode_text(iaddr->name));
     g_object_unref(iaddr_list);
   }
   return from;
@@ -313,7 +313,7 @@ int main(int argc, char **argv) {
   FILE *output;
   
   g_type_init();
-  g_mime_init(0);
+  g_mime_init(GMIME_ENABLE_RFC2047_WORKAROUNDS);
   
   if (argc < 3) {
     printf("Usage: woof <output-file> <input-files...>\n");
